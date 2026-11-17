@@ -11,20 +11,31 @@ spring:
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       bootstrap-servers: localhost:9092
-      group-id: my-avro-consumer-group
       auto-offset-reset: earliest
       properties:
           schema.registry.url: http://localhost:8081
-          specific.avro.reader: true
     listener:
       observation-enabled: true
     client-id: my-client-id
+    containers:
+      avro:
+        consumer:
+          client-id: my-avro-client-id
+          group-id: my-avro-consumer-group
+          value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+          properties:
+            specific.avro.reader: true
+      json:
+        consumer:
+          client-id: my-json-client-id
+          group-id: multiple-consumer-beans-group-json
+          value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+          properties:
+            spring.json.trusted.packages: com.example.kafka4.event.json
 
 management:
   endpoints:
     web:
       exposure:
         include: '*'
-
